@@ -1,0 +1,98 @@
+﻿{{ define "admin/home.html" }}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>后台管理系统</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/js/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="/static/js/jquery-2.2.0.min.js"></script>
+    <script src="/static/js/charts/Chart.js"></script>
+</head>
+<body>
+    <div id="areascontent">
+        <div class="rows" style="margin-bottom: 0.8%; overflow: hidden;">
+            <div style="float: left;">
+                <div style="height: 100%; border: 1px solid #e6e6e6; overflow: hidden;">
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #578ebe;">
+                            <div class="stat-icon">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                            <h2 class="m-top-none">17<span>件</span></h2>
+                            <h5>待审核提案</h5>
+                        </div>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #e35b5a;">
+                            <h2 class="m-top-none">12<span>件</span></h2>
+                            <h5>待复审提案</h5>
+                            <div class="stat-icon">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #44b6ae;">
+                            <h2 class="m-top-none">20<span>件</span></h2>
+                            <h5>意见建议</h5>
+                            <div class="stat-icon">
+                                <i class="fa fa-file-text-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #8775a7; margin-right: 0px;">
+                            <h2 class="m-top-none">6<span>件</span></h2>
+                            <h5>联名提案</h5>
+                            <div class="stat-icon">
+                                <i class="fa fa-file-text-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #4f5c65; margin-bottom: 0px;">
+                            <h2 class="m-top-none">4<span>件</span></h2>
+                            <h5>个人提案</h5>
+                            <div class="stat-icon">
+                                <i class="fa fa-file-text-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #14aae4; margin-bottom: 0px;">
+                            <h2 class="m-top-none">5<span>件</span></h2>
+                            <h5>民主党派提案</h5>
+                            <div class="stat-icon">
+                                <i class="fa fa-file-text-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #949FB1; margin-bottom: 0px;">
+                            <h2 class="m-top-none">3<span>件</span></h2>
+                            <h5>人民团体提案</h5>
+                            <div class="stat-icon">
+                                <i class="fa fa-file-text-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dashboard-stats-item" style="background-color: #f29503; margin-right: 0px; margin-bottom: 0px;">
+                            <h2 class="m-top-none">6<span>件</span></h2>
+                            <h5>其它党派提案</h5>
+                            <div class="stat-icon">
+                                <i class="fa fa-file-text-o"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{{ end }}

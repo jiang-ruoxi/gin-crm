@@ -1,0 +1,307 @@
+{{ define "admin/access.html" }}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/layui/css/layui.css?t=1111" media="all">
+</head>
+<body>
+<div class="layui-form">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" onclick="showAccessInit()">添加权限菜单</button>
+    </div>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>模块名称</th>
+            <th>节点类型</th>
+            <th>操作地址</th>
+            <th>排序</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range $index,$item := .access_list}}
+        <tr>
+            <td>{{$item.ModuleName}}</td>
+            <td>
+                {{if eq $item.Type 1}}
+                <span class="layui-btn layui-btn-xs">模块</span>
+                {{else if eq $item.Type 2}}
+                <span class="layui-btn layui-btn-danger layui-btn-xs">菜单</span>
+                {{else}}
+                <span class="layui-btn layui-btn-warm layui-btn-xs">操作</span>
+                {{end}}
+            </td>
+            <td>{{$item.Url }}</td>
+            <td>{{$item.Sort }}</td>
+            <td>
+                <a class="layui-btn layui-btn-xs" onclick="editAccess({{$item.Id }})">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteAccess({{$item.Id }})">删除</a>
+            </td>
+        </tr>
+        {{range $k,$v := $item.AccessItem}}
+        <tr>
+            <td style="text-indent:2em;">{{$v.ModuleName}}</td>
+            <td>
+                {{if eq $v.Type 1}}
+                <span class="layui-btn layui-btn-xs">模块</span>
+                {{else if eq $v.Type 2}}
+                <span class="layui-btn layui-btn-danger layui-btn-xs">菜单</span>
+                {{else}}
+                <span class="layui-btn layui-btn-warm layui-btn-xs">操作</span>
+                {{end}}
+            </td>
+            <td>{{$v.Url }}</td>
+            <td>{{$v.Sort }}</td>
+            <td>
+                <a class="layui-btn layui-btn-xs" onclick="editAccess({{$v.Id }})">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteAccess({{$v.Id }})">删除</a>
+            </td>
+        </tr>
+        {{end}}
+        {{end}}
+        </tbody>
+    </table>
+</div>
+
+<div id="initFormData" style="display:none">
+    <form class="layui-form" id="formId" style="padding-top: 10px;padding-right: 10%;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">操作名称</label>
+            <div class="layui-input-block">
+                <input type="hidden" name="manager_id" id="manager_id" value="">
+                <input type="text" name="module_name" id="module_name" required lay-verify="required"
+                       placeholder="请输入名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属模块</label>
+            <div class="layui-input-block">
+                <select name="module_id" id="module_id" lay-search>
+                    <option value="0">请选择</option>
+                    {{range $key,$value := .access_top_list}}
+                    <option value="{{$value.Id}}">{{$value.ModuleName}}</option>
+                    {{end}}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">节点类型</label>
+            <div class="layui-input-block">
+                <select name="type" id="type" lay-search>
+                    <option value="0">请选择</option>
+                    <option value="1">模块</option>
+                    <option value="2">菜单</option>
+                    <option value="3">操作</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">操作地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="url" id="url" required lay-verify="required" placeholder="请输入操作地址"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="text" name="sort" id="sort" required lay-verify="required" value="100" placeholder="请输入排序序号"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="显示" checked>
+                <input type="radio" name="status" value="0" title="隐藏">
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="layui-layer-shade" id="layui-layer-shade" times="2"
+     style="z-index:999; background-color:#000; opacity:0.5; filter:alpha(opacity=50);display: none;"></div>
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+<script src="/static/js/jquery-2.2.0.min.js"></script>
+<script>
+    function showAccessInit() {
+        $("#layui-layer-shade").show()
+        showFormData()
+    }
+
+    //删除操作
+    function deleteAccess(accessId) {
+        layer.confirm('确定要删除当前数据吗？', function (index) {
+            var params = {"id": accessId}
+            $.post("/admin/access/delete", params, function (data) {
+                if (data.code != 10000) {
+                    layer.msg(data.message, {icon: 2, time: 2000})
+                } else {
+                    layer.msg(data.message, {icon: 1, time: 2000})
+                    window.location.href = "/admin/access"
+                }
+                return
+            })
+        });
+    }
+
+    function editAccess(accessId){
+        console.log(accessId)
+        getAccessInfo(accessId)
+        layer.open({
+            type: 1,
+            area: ['600px', '500px'],
+            title: '编辑角色'
+            , content: $("#initFormData"),
+            shade: 0,
+            btn: ['提交', '重置']
+            , btn1: function (index, layero) {
+                doEditData(isChecked)
+            },
+            btn2: function (index, layero) {
+                resetMyForm()
+                return false;
+            },
+            cancel: function (layero, index) {
+                hideAll()
+                layer.closeAll();
+            }
+        });
+    }
+
+
+    function showFormData() {
+        resetMyForm()
+        layer.open({
+            type: 1,
+            area: ['600px', '500px'],
+            title: '添加权限菜单'
+            , content: $("#initFormData"),
+            shade: 0,
+            btn: ['提交', '重置']
+            , btn1: function (index, layero) {
+                doAddData()
+            },
+            btn2: function (index, layero) {
+                resetMyForm()
+                return false;
+            },
+            cancel: function (layero, index) {
+                hideAll()
+                layer.closeAll();
+            }
+        });
+    }
+
+    function doEditData(isChecked) {
+        var table = layui.table;
+        var role_name = $("#role_name").val();
+        var role_id = $("#role_id").val();
+        if (role_name == "") {
+            layer.msg("请填写角色名称！", {icon: 2, time: 1000})
+            return
+        }
+        var params = {"role_name": role_name, "status": isChecked, "role_id": role_id}
+        $.post("/admin/role/edit", params, function (data) {
+            if (data.code == 10000) {
+                layer.msg(data.message, {icon: 1, time: 2000})
+                table.reload('test', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                })
+                hideAll()
+                layer.closeAll();
+            }
+        })
+    }
+
+    function doAddData() {
+        if ($("#module_name").val() == "") {
+            layer.msg("请输入操作名称！", {icon: 2, time: 1000})
+            return
+        }
+        if ($("#type").val() == "") {
+            layer.msg("请选择节点类型！", {icon: 2, time: 1000})
+            return
+        }
+        if ($("#type").val() >1 && $("#url").val() == "") {
+            layer.msg("请输入操作地址！", {icon: 2, time: 1000})
+            return
+        }
+
+        var params = {
+            "module_name": $("#module_name").val(),
+            "module_id": $("#module_id").val(),
+            "type": $("#type").val(),
+            "url": $("#url").val(),
+            "sort": $("#sort").val(),
+            "status": $("#status").val(),
+        }
+        $.post("/admin/access/add", params, function (data) {
+            if (data.code != 10000) {
+                layer.msg(data.message, {icon: 2, time: 2000})
+                return
+            }
+            layer.msg("添加成功！", {icon: 1, time: 2000})
+            window.location.href = "/admin/access"
+            return
+        })
+    }
+
+    function getAccessInfo(accessId) {
+        var params = {"access_id": accessId}
+        $.post("/admin/access/info", params, function (data) {
+            if (data.code != 10000){
+                return
+            }
+            $("#id").val(data.data.module_id);
+            $("#module_name").val(data.data.module_name);
+            $("#sort").val(data.data.sort)
+            $("#url").val(data.data.url)
+            $('#type').find('option[value='+data.data.type+']').attr('selected',true);
+            // $('#type option:eq(data.data.type)').attr('selected','selected');
+        })
+    }
+
+    function resetMyForm() {
+        document.getElementById("formId").reset();
+    }
+
+    function hideAll() {
+        getShadeHide()
+        initFormDataHide()
+    }
+
+    function showAll() {
+        getShadeShow()
+        initFormDataShow()
+    }
+
+    function getShadeShow() {
+        $("#layui-layer-shade").show()
+    }
+
+    function getShadeHide() {
+        $("#layui-layer-shade").hide()
+    }
+
+    function initFormDataShow() {
+        $("#initFormData").show()
+    }
+
+    function initFormDataHide() {
+        $("#initFormData").hide()
+    }
+</script>
+
+</body>
+</html>
+{{ end }}
