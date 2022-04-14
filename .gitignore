@@ -1,3 +1,5 @@
 .DS_Store
 .idea
+gin-crm
 /vendor
+.idea/*
