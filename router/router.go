@@ -15,7 +15,6 @@ func InitRouter() *gin.Engine {
 		admin.GET("/index", controller.AdminIndex)
 		admin.GET("/home", controller.AdminHome)
 		admin.GET("/role", controller.AdminRole)
-		admin.GET("/role_tail", controller.AdminRoleTail)
 		admin.GET("/auth", controller.AdminRoleAuth)
 
 		admin.GET("/access", controller.AdminAccess)

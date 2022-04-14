@@ -5,7 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b1c2756a-f5cb-4b22-b559-e1ad4a76d13e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/redis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/Admin.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/Admin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gin-crm" beforeDir="false" afterPath="$PROJECT_DIR$/gin-crm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/view/admin/role1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/view/admin/role_auth.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/view/admin/role_tail.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,16 +96,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/view/admin/manager.html</url>
-          <line>91</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
