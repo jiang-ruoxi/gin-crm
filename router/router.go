@@ -32,7 +32,10 @@ func InitRouter() *gin.Engine {
 
 		admin.GET("/manager", controller.AdminManager)
 		admin.GET("/manager/list", controller.GetManagerList)
+		admin.POST("/manager/info", controller.GetManagerInfo)
 		admin.POST("/manager/add", controller.DoManagerAddData)
+		admin.POST("/manager/edit/status", controller.DoEditManagerStatus)
+		admin.POST("/manager/delete", controller.DoManagerDeleteData)
 
 	}
 

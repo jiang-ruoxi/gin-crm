@@ -21,6 +21,7 @@
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
+
 <div id="initFormData" style="display:none">
     <form class="layui-form" id="formId" style="padding-top: 10px;padding-right: 10%;">
         <div class="layui-form-item">
@@ -34,32 +35,28 @@
         <div class="layui-form-item">
             <label class="layui-form-label">密码</label>
             <div class="layui-input-block">
-                <input type="text" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="on" class="layui-input" id="password">
+                <input type="text" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="on"
+                       class="layui-input" id="password">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">手机号</label>
             <div class="layui-input-block">
-                <input type="mobile" name="mobile" required lay-verify="required" placeholder="请输入手机号" autocomplete="on" class="layui-input" id="mobile">
+                <input type="mobile" name="mobile" required lay-verify="required" placeholder="请输入手机号" autocomplete="on"
+                       class="layui-input" id="mobile">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">所属角色</label>
             <div class="layui-input-block">
-                <select name="roleId"  id="roleId" lay-search>
+                <select name="roleId" id="roleId" lay-search>
                     <option value="">请选择</option>
                     <option value="1">你工作的第一个城市？</option>
                     <option value="2">你的工号？</option>
-                    <option value="3">你最喜欢的老师？</option>
-                    <option value="4">你最喜欢的老师？</option>
-                    <option value="5">你最喜欢的老师？</option>
-                    <option value="6">你最喜欢的老师？</option>
-                    <option value="7">你最喜欢的老师？</option>
-                    <option value="8">你最喜欢的老师？</option>
                 </select>
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" id="switchSex">
             <label class="layui-form-label">性别</label>
             <div class="layui-input-block">
                 <input type="radio" name="sex" value="男" title="男">
@@ -73,10 +70,9 @@
                        autocomplete="on" class="layui-input" id="email">
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" id="switchTestDiv">
             <label class="layui-form-label">启用状态</label>
             <div class="layui-input-block">
-                <input type="hidden" name="is_edit_switch" id="is_edit_switch" value="">
                 <input type="checkbox" name="switch" id="switchTest" lay-filter="switchTest" lay-skin="switch"
                        lay-text="开启|关闭">
             </div>
@@ -84,13 +80,15 @@
     </form>
 </div>
 
-<div class="layui-layer-shade" id="layui-layer-shade" times="2" style="z-index:999; background-color:#000; opacity:0.5; filter:alpha(opacity=50);display: none;"></div>
+<div class="layui-layer-shade" id="layui-layer-shade" times="2"
+     style="z-index:999; background-color:#000; opacity:0.5; filter:alpha(opacity=50);display: none;"></div>
 <script src="/static/layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
 <script src="/static/js/jquery-2.2.0.min.js"></script>
 <script>
     layui.use('table', function () {
         var table = layui.table;
+        var form = layui.form;
 
         table.render({
             elem: '#test'
@@ -101,9 +99,30 @@
             , cols: [[
                 {field: 'id', title: 'ID', width: 80, fixed: 'left', sort: true}
                 , {field: 'nick_name', title: '用户名'}
-                , {field: 'role.add_time', title: '所属角色'}
-                , {field: 'status', title: '启用状态'}
+                , {field: 'role_name', title: '所属角色'}
+                , {
+                    field: 'status', title: '启用状态', templet: function (row) {
+                        var html = "<input type='checkbox' lay-skin='switch' lay-text='启用|禁用' lay-filter='checkboxIsSelected' table-index='" + row.status + "' class='checkboxIsSelected' value='" + row.id + "' ";
+                        if (row.status == 1) {
+                            html += " checked ";
+                        }
+                        html += ">";
+                        return html;
+                    }
+                }
                 , {field: 'add_time', title: '添加时间'}
+                , {
+                    field: 'is_super', title: '超级管理员', templet: function (row) {
+                        console.log(row)
+                        if (row.is_super == 1) {
+                            var html = "<span class='layui-btn layui-btn-danger layui-btn-xs'>是</span>";
+                        } else {
+                            var html = "<span class='layui-btn layui-btn-xs'>否</span>";
+                        }
+
+                        return html;
+                    }
+                }
                 , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
             ]]
             , page: true
@@ -124,35 +143,49 @@
             var data = obj.data;
             //console.log(obj)
             if (obj.event === 'del') {
-                if (data.id == 1){
+                if (data.is_super == 1) {
                     layer.msg("超级管理员禁止删除", {icon: 2, time: 2000})
                     return
                 }
                 layer.confirm('确定要删除当前数据吗？', function (index) {
 
                     if (index) {
-                        var params = {"id": data.id}
-                        $.post("/admin/role/delete", params, function (data) {
-                            if (data.code == 200) {
-                                obj.del();
-                                layer.msg("删除成功！", {icon: 1, time: 1000})
-                                table.reload('test', {
-                                    page: {
-                                        curr: 1 //重新从第 1 页开始
-                                    }
-                                })
+                        var params = {"manager_id": data.id}
+                        $.post("/admin/manager/delete", params, function (data) {
+                            if (data.code != 10000) {
+                                layer.msg(data.message, {icon: 2, time: 2000})
+                                return
                             }
+                            obj.del();
+                            layer.msg(data.message, {icon: 1, time: 2000})
+                            table.reload('test', {
+                                page: {
+                                    curr: 1 //重新从第 1 页开始
+                                }
+                            })
+
                         })
                     }
                 });
             } else if (obj.event === 'edit') {
-                showAll()
+                showEdit()
                 showFormDataEdit(data.id)
             }
         });
+        //监听性别操作
+        form.on('switch(checkboxIsSelected)', function (obj) {
+            var status = obj.elem.checked == true ? 1 : 2;
+            console.log(status)
+            $.post("/admin/manager/edit/status", {"status": status, "manager_id": obj.value}, function (data) {
+                if (data.code == 10000) {
+                    layer.msg(data.message, {icon: 1, time: 2000})
+                }
+            })
+        });
     });
 
-    function showFormDataEdit(roleId) {
+
+    function showFormDataEdit(managerId) {
         var isChecked = 0
         form = layui.form
         form.on('switch(switchTest)', function (data) {
@@ -162,7 +195,7 @@
                 isChecked = 0
             }
         });
-        getRoleInfo(roleId)
+        getMangerInfo(managerId)
         layer.open({
             type: 1,
             area: ['600px', '500px'],
@@ -216,7 +249,7 @@
         });
     }
 
-    function doEditData(isChecked){
+    function doEditData(isChecked) {
         var table = layui.table;
         var role_name = $("#role_name").val();
         var role_id = $("#role_id").val();
@@ -224,8 +257,8 @@
             layer.msg("请填写角色名称！", {icon: 2, time: 1000})
             return
         }
-        var params = {"role_name": role_name, "status": isChecked, "role_id":role_id}
-        $.post("/admin/role/edit", params, function (data) {
+        var params = {"role_name": role_name, "status": isChecked, "role_id": role_id}
+        $.post("/admin/manager/edit", params, function (data) {
             if (data.code == 10000) {
                 layer.msg(data.message, {icon: 1, time: 2000})
                 table.reload('test', {
@@ -263,11 +296,11 @@
 
         var params = {
             "nick_name": $("#nick_name").val(),
-            "password":$("#password").val(),
-            "mobile":$("#mobile").val(),
-            "role_id":$("#roleId").val(),
-            "email":$("#email").val(),
-            "sex":$('input[name="sex"]').val(),
+            "password": $("#password").val(),
+            "mobile": $("#mobile").val(),
+            "role_id": $("#roleId").val(),
+            "email": $("#email").val(),
+            "sex": $('input[name="sex"]').val(),
             "status": isChecked
         }
         $.post("/admin/manager/add", params, function (data) {
@@ -286,16 +319,14 @@
         })
     }
 
-    function getRoleInfo(roleId) {
-        var params = {"role_id": roleId}
-        $.post("/admin/role/info", params, function (data) {
+    function getMangerInfo(managerId) {
+        var params = {"manager_id": managerId}
+        $.post("/admin/manager/info", params, function (data) {
             if (data.code == 10000) {
-                $("#role_id").val(data.data.id);
-                $("#role_name").val(data.data.name);
-                $("#is_edit_switch").val(data.data.status)
-                if (data.data.status == 1) {
-                    layui.jquery('input[name="switch"]').next().addClass('layui-form-onswitch');
-                }
+                $("#manager_id").val(data.data.id);
+                $("#nick_name").val(data.data.nick_name);
+                $("#mobile").val(data.data.mobile);
+                $("#email").val(data.data.email);
             }
         })
     }
@@ -304,35 +335,39 @@
         document.getElementById("formId").reset();
     }
 
-    function hideAll()
-    {
+    function hideAll() {
         getShadeHide()
         initFormDataHide()
     }
 
-    function showAll()
-    {
+    function showAll() {
         getShadeShow()
         initFormDataShow()
     }
 
-    function getShadeShow()
-    {
+    function showEdit() {
+        showAll()
+        closeSwitchTestDiv()
+    }
+
+    function closeSwitchTestDiv() {
+        $("#switchTestDiv").hide()
+        $("#switchSex").hide()
+    }
+
+    function getShadeShow() {
         $("#layui-layer-shade").show()
     }
 
-    function getShadeHide()
-    {
+    function getShadeHide() {
         $("#layui-layer-shade").hide()
     }
 
-    function initFormDataShow()
-    {
+    function initFormDataShow() {
         $("#initFormData").show()
     }
 
-    function initFormDataHide()
-    {
+    function initFormDataHide() {
         $("#initFormData").hide()
     }
 </script>
