@@ -16,7 +16,8 @@ func GetRedisDB() *redis.Client {
 }
 
 func init() {
-	addr := "localhost"
+	//todo ip、端口、密码、db 需要执行到conf/app.ini
+	addr := "127.0.0.1"
 	port := "6379"
 	password := ""
 	redisClient = redis.NewClient(&redis.Options{
