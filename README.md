@@ -33,5 +33,5 @@ go mod vendor
 ```
 go run main.go
 ```
-
-访问localhost:8080
+由于值简单做了几个菜单，还为进行登录操作的验证
+项目访问地址， 访问http://localhost:8080/admin/index
